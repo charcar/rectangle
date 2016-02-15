@@ -6,40 +6,30 @@ import static spark.Spark.*;
 
 public class App {
     public static void main(String[] args) {
-
-        ProcessBuilder process = new ProcessBuilder();
-        Integer port;
-        if (process.environment().get("PORT") != null) {
-            port = Integer.parseInt(process.environment().get("PORT"));
-        } else {
-            port = 4567;
-        }
-
-        setPort(port);
-
         staticFileLocation("/public");
         String layout = "templates/layout.vtl";
 
-        //RESTful ARCHITECTURE
-        //Use POST to create something on the server
-        //Use GET to retrieve something from the server
-        //Use PUT to change or update something on the server
-        //Use DELETE to remove or delete something on the server
-        //Keep URLs intuitive
-        //Each request from client contains all info necessary for that request
+        get("/", (request, response) -> {
+            HashMap<String, Object> model = new HashMap<String, Object>();
 
-        //ROUTES: Home Page
+            model.put("template", "templates/home.vtl");
+            return new ModelAndView(model, layout);
+        }, new VelocityTemplateEngine());
 
-        // get("/", (request, response) -> {
-        //     HashMap<String, Object> model = new HashMap<String, Object>();
+        get("/rectangle", (request, response) -> {
+            HashMap<String, Object> model = new HashMap<String, Object>();
 
-        //     model.put("template", "templates/index.vtl");
-        //     return new ModelAndView(model, layout);
-        // }, new VelocityTemplateEngine());
+            int length = Integer.parseInt(request.queryParams("length"));
+            int width = Integer.parseInt(request.queryParams("width"));
 
-        //ROUTES: Identification of Resources
+            Rectangle myRectangle = new Rectangle(length, width);
+            model.put("myRectangle", myRectangle);
 
-        //ROUTES: Changing Resources
+            model.put("template", "templates/rectangle.vtl");
+            return new ModelAndView(model, layout);
+        }, new VelocityTemplateEngine());
+
+
 
     }
 }
